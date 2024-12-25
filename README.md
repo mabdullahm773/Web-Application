@@ -13,3 +13,5 @@
 - **Added Data Folder**
 - **Added Checkout Page**
 - **Added Images**
+- **Added Searchpage**
+- **Added ContactUS**
