@@ -1,8 +1,6 @@
-Ecommerce Website
+# Ecommerce Website
 
-Mohammad Abdullah 
-Installation procedure of React
-
-Syed Danyal Raza
-
-Huzaifa Irfan
+## Authors
+- **Mohammad Abdullah**
+- **Syed Danyal Raza**
+- **Huzaifa Irfan**
