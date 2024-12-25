@@ -30,7 +30,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    dir('Ecommerce-Frontend') { // Navigate into the cloned repo directory
+                    dir('Web-Application') { // Navigate into the cloned repo directory
                         bat 'docker build -t %DOCKER_IMAGE% .'
                     }
                 }
