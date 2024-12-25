@@ -16,3 +16,4 @@
 - **Added Searchpage**
 - **Added ContactUS**
 - **Added Dockerfile**
+- **Added DcokerCompose**
