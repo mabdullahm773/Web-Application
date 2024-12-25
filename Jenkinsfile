@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE = 'danyalraza237/ecommerce-frontend:latest'
+        DOCKER_IMAGE = 'danyalraza237/web-application:latest'
         DOCKER_REGISTRY = 'docker.io'
     }
     stages {
@@ -18,7 +18,7 @@ pipeline {
                                                   usernameVariable: 'GITHUB_USERNAME', 
                                                   passwordVariable: 'GITHUB_PASSWORD')]) {
                     // Clone the GitHub repository using credentials
-                    bat 'git clone https://%GITHUB_USERNAME%:%GITHUB_PASSWORD%@github.com/Danyal-Raza/Ecommerce-Frontend.git'
+                    bat 'git clone https://%GITHUB_USERNAME%:%GITHUB_PASSWORD%@github.com/mabdullahm773/Web-Application'
                 }
             }
         }
