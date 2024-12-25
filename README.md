@@ -7,7 +7,9 @@
 
 ## Implementation
 - **React Installed**
-- **Added Basic core app files **
+- **Added Basic core app files**
 - **Added HomePage**
 - **Added HomePage Components**
 - **Added Data Folder**
+- **Added Checkout Page**
+- **Added Images**
