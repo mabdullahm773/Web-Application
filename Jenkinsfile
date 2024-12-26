@@ -1,22 +1,22 @@
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE = 'danyalraza237/web-application:latest'
+        DOCKER_IMAGE = 'mabdullah773/web-application:latest'
         DOCKER_REGISTRY = 'docker.io'
     }
     stages {
         stage('Clean Workspace') {
             steps {
                 script {
-                    deleteDir() // Clean the workspace
+                    deleteDir() // Clean the previous workspace
                 }
             }
         }
         stage('Checkout') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'github-credentials', 
-                                                  usernameVariable: 'GITHUB_USERNAME', 
-                                                  passwordVariable: 'GITHUB_PASSWORD')]) {
+                withCredentials([usernamePassword(credentialsId: 'A-github-credentials', 
+                                                  usernameVariable: 'A-GITHUB_USERNAME', 
+                                                  passwordVariable: 'A-GITHUB_PASSWORD')]) {
                     // Clone the GitHub repository using credentials
                     bat 'git clone https://%GITHUB_USERNAME%:%GITHUB_PASSWORD%@github.com/mabdullahm773/Web-Application'
                 }
@@ -38,9 +38,9 @@ pipeline {
         }
         stage('Push Docker Image') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'docker-credentials', 
-                                                  usernameVariable: 'DOCKER_USERNAME', 
-                                                  passwordVariable: 'DOCKER_PASSWORD')]) {
+                withCredentials([usernamePassword(credentialsId: 'A-docker-credentials', 
+                                                  usernameVariable: 'A-DOCKER_USERNAME', 
+                                                  passwordVariable: 'A-DOCKER_PASSWORD')]) {
                     script {
                         // Login to Docker Hub and push the image
                         bat """
