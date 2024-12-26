@@ -38,16 +38,9 @@ pipeline {
         }
         stage('Push Docker Image') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'docker-credentials', 
-                                                  usernameVariable: 'DOCKER_USERNAME', 
-                                                  passwordVariable: 'DOCKER_PASSWORD')]) {
-                    script {
-                        // Login to Docker Hub and push the image
-                        bat """
-                            echo %DOCKER_PASSWORD% | docker login %DOCKER_REGISTRY% -u %DOCKER_USERNAME% --password-stdin
-                            docker push %DOCKER_IMAGE%
-                        """
-                    }
+                script {
+                    // Push the Docker image directly to the public repository
+                    bat 'docker push %DOCKER_IMAGE%'
                 }
             }
         }
