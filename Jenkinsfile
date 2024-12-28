@@ -3,6 +3,8 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'huzaifa305/web-application:latest'
         DOCKER_REGISTRY = 'docker.io'
+        DOCKER_USERNAME = 'huzaifa305'  // Hardcoded Docker username
+        DOCKER_PASSWORD = 'Jadenmartel@786'  // Hardcoded Docker password
     }
     stages {
         stage('Clean Workspace') {
@@ -38,16 +40,12 @@ pipeline {
         }
         stage('Push Docker Image') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'docker-credentials', 
-                                                  usernameVariable: 'DOCKER_USERNAME', 
-                                                  passwordVariable: 'DOCKER_PASSWORD')]) {
-                    script {
-                        // Login to Docker Hub and push the image
-                        bat """
-                            echo %DOCKER_PASSWORD% | docker login %DOCKER_REGISTRY% -u %DOCKER_USERNAME% --password-stdin
-                            docker push %DOCKER_IMAGE%
-                        """
-                    }
+                script {
+                    // Login to Docker Hub and push the image using hardcoded credentials
+                    bat """
+                        echo %DOCKER_PASSWORD% | docker login %DOCKER_REGISTRY% -u %DOCKER_USERNAME% --password-stdin
+                        docker push %DOCKER_IMAGE%
+                    """
                 }
             }
         }
