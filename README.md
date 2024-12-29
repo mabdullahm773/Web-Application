@@ -16,4 +16,5 @@
 - **Added Searchpage**
 - **Added ContactUS**
 - **Added Dockerfile**
-- **Added DcokerCompose**
+- **Added DockerCompose**
+- **Added Slack on Channel #ecommerce-web-applicaiton**
