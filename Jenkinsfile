@@ -78,8 +78,9 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 script {
+                    
                     echo "Running Docker container from image: ${DOCKER_IMAGE}"
-                    bat 'docker run -d %DOCKER_IMAGE%'
+                    bat 'docker run -d -p 5000:5000 %DOCKER_IMAGE%'
                 }
             }
         }
