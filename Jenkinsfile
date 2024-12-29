@@ -31,8 +31,17 @@ pipeline {
             steps {
                 script {
                     dir('Web-Application') { // Navigate into the cloned repo directory
+                        echo "Building Docker image: ${DOCKER_IMAGE}"
                         bat 'docker build -t %DOCKER_IMAGE% .'
                     }
+                }
+            }
+        }
+        stage('Debug Docker Image Build') {
+            steps {
+                script {
+                    echo "Checking local Docker images after build:"
+                    bat 'docker images'
                 }
             }
         }
@@ -42,20 +51,39 @@ pipeline {
                                                   usernameVariable: 'DOCKER_USERNAME', 
                                                   passwordVariable: 'DOCKER_PASSWORD')]) {
                     script {
-                        // Login to Docker Hub and push the image
+                        echo "Logging in to Docker registry: ${DOCKER_REGISTRY} with user: ${DOCKER_USERNAME}"
                         bat """
                             echo %DOCKER_PASSWORD% | docker login %DOCKER_REGISTRY% -u %DOCKER_USERNAME% --password-stdin
-                            docker push %DOCKER_IMAGE%
                         """
+                        echo "Pushing Docker image: ${DOCKER_IMAGE}"
+                        bat 'docker push %DOCKER_IMAGE%'
                     }
+                }
+            }
+        }
+        stage('Debug Docker Image Push') {
+            steps {
+                script {
+                    echo "Checking Docker registry for the pushed image:"
+                    bat 'docker pull %DOCKER_IMAGE%'
                 }
             }
         }
         stage('Run Docker Container') {
             steps {
                 script {
-                    // Run the Docker container
+                    echo "Running Docker container from image: ${DOCKER_IMAGE}"
                     bat 'docker run -d %DOCKER_IMAGE%'
+                }
+            }
+        }
+        stage('Debug Docker Container') {
+            steps {
+                script {
+                    echo "Listing running Docker containers:"
+                    bat 'docker ps'
+                    echo "Checking container logs:"
+                    bat 'docker logs $(docker ps -l -q)' // Gets logs of the last started container
                 }
             }
         }
