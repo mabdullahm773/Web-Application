@@ -27,6 +27,26 @@ pipeline {
                 bat 'dir'  // List the files in the workspace
             }
         }
+
+
+        stage('Clean Old Containers and Images') {
+            steps {
+                script {
+                    // Stop and remove the running container
+                    echo "Stopping and removing any previous containers..."
+                    bat """
+                        docker ps -q --filter "name=${CONTAINER_NAME}" | for /f "tokens=*" %i in ('more') do docker stop %i && docker rm %i
+                    """
+
+                    // Remove the old image
+                    echo "Removing old Docker images..."
+                    bat """
+                        docker images -q ${DOCKER_IMAGE} | for /f "tokens=*" %i in ('more') do docker rmi -f %i
+                    """
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 script {
