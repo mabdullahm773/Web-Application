@@ -52,11 +52,17 @@ pipeline {
                                                   passwordVariable: 'DOCKER_PASSWORD')]) {
                     script {
                         echo "Logging in to Docker registry: ${DOCKER_REGISTRY} with user: ${DOCKER_USERNAME}"
+
                         bat """
-                            echo %DOCKER_PASSWORD% | docker login %DOCKER_REGISTRY% -u %DOCKER_USERNAME% --password-stdin
+                            docker login %DOCKER_REGISTRY% -u %DOCKER_USERNAME% -p %DOCKER_PASSWORD%
                         """
+
                         echo "Pushing Docker image: ${DOCKER_IMAGE}"
-                        bat 'docker push %DOCKER_IMAGE%'
+
+                        bat """
+                            docker push %DOCKER_IMAGE%
+                        """
+
                     }
                 }
             }
