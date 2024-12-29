@@ -16,4 +16,4 @@
 - **Added Searchpage**
 - **Added ContactUS**
 - **Added Dockerfile**
-- **Added DcokerCompose**
+- **Added DockerCompose**
