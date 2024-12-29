@@ -88,8 +88,6 @@ pipeline {
                 script {
                     echo "Listing running Docker containers:"
                     bat 'docker ps'
-                    echo "Checking container logs:"
-                    bat 'docker logs $(docker ps -l -q)' // Gets logs of the last started container
                 }
             }
         }
