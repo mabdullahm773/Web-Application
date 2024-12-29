@@ -99,9 +99,21 @@ pipeline {
         }
         success {
             echo 'Pipeline succeeded!'
+            script {
+                slackSend(
+                    channel: '#ecommerce-web-applicaiton',
+                    message: "Pipeline succeeded! The Docker image ${DOCKER_IMAGE} was built and pushed successfully."
+                )
+            }
         }
         failure {
             echo 'Pipeline failed.'
+             script {
+                slackSend(
+                    channel: '#ecommerce-web-applicaiton',
+                    message: "Pipeline failed! Please check the Jenkins logs for details."
+                )
+            }
         }
     }
 }
