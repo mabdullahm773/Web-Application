@@ -94,6 +94,30 @@ pipeline {
                 }
             }
         }
+
+
+    
+        stage('Deploy to Local Kubernetes') {
+            steps {
+                script {
+                    echo "Applying Kubernetes manifests locally..."
+                    bat 'kubectl apply -f Web-Application/k8s/deployment.yaml'
+                    bat 'kubectl apply -f Web-Application/k8s/service.yaml'
+                }
+            }
+        }
+        stage('Debug Local Kubernetes') {
+            steps {
+                script {
+                    echo "Checking local Kubernetes cluster..."
+                    bat 'kubectl get pods'
+                    bat 'kubectl get services'
+                }
+            }
+        }
+
+
+        
     }
     post {
         always {
