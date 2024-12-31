@@ -3,7 +3,6 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'huzaifa305/web-application:latest'
         DOCKER_REGISTRY = 'docker.io'
-        KUBECONFIG = """C:\\Users\\Administrator\\.kube\\config""" // Path to your kubeconfig file
     }
     stages {
         stage('Clean Workspace') {
@@ -78,39 +77,28 @@ pipeline {
                 }
             }
         }
+
+
         stage('Run Docker Container') {
             steps {
                 script {
-                    echo "Running Docker container from image: ${DOCKER_IMAGE}"
-                    bat 'docker run -d %DOCKER_IMAGE%'
-
                     
                     echo "Running Docker container from image: ${DOCKER_IMAGE}"
                     bat 'docker run -d -p 5000:5000 %DOCKER_IMAGE%'
                 }
             }
         }
+
         stage('Debug Docker Container') {
             steps {
                 script {
                     echo "Listing running Docker containers:"
                     bat 'docker ps'
-
-                }
-            }
-        }
-        stage('Debug Docker Container') {
-            steps {
-                script {
-                    echo "Listing running Docker containers:"
-                    bat 'docker ps'
-                    echo "Checking container logs:"
-                    bat 'docker logs $(docker ps -l -q)' // Gets logs of the last started container
                 }
             }
         }
 
-         stage('Deploy to Kubernetes') {
+        stage('Deploy to Kubernetes') {
             steps {
                 withCredentials([file(credentialsId: 'kubeconfig-credentials', variable: 'KUBECONFIG')]) {
                     script {
@@ -123,6 +111,7 @@ pipeline {
                 }
             }
         }
+
         stage('Debug Kubernetes Deployment') {
             steps {
                 script {
@@ -134,29 +123,9 @@ pipeline {
         }
 
 
-    
-        stage('Deploy to Local Kubernetes') {
-            steps {
-                script {
-                    echo "Applying Kubernetes manifests locally..."
-                    bat 'kubectl apply -f Web-Application/k8s/deployment.yaml'
-                    bat 'kubectl apply -f Web-Application/k8s/service.yaml'
-                }
-            }
-        }
-        stage('Debug Local Kubernetes') {
-            steps {
-                script {
-                    echo "Checking local Kubernetes cluster..."
-                    bat 'kubectl get pods'
-                    bat 'kubectl get services'
-                }
-            }
-        }
 
-
-        
     }
+    
     post {
         always {
             echo 'Pipeline completed.'
@@ -181,3 +150,8 @@ pipeline {
         }
     }
 }
+
+         
+
+
+    
