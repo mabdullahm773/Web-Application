@@ -103,13 +103,17 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
+
                     script {
+
+                        bat 'xcopy Web-Application/kubernets C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\Ecommerce-Website-Project\\Web-Application\\kubernets /E /Y'
+                        
                         dir('Web-Application/kubernets/') {
                             
                              // Assuming Kubernetes manifests are in 'k8s' directory
 
-                             echo "Listing files in the current directory:"
-                bat 'dir' // List files in the current directory to verify the path
+                            echo "Listing files in the current directory:"
+                            bat 'dir' // List files in the current directory to verify the path
                             echo "Applying Kubernetes manifests..."
                             bat 'kubectl apply -f deployment.yaml'
                             bat 'kubectl apply -f service.yaml'
