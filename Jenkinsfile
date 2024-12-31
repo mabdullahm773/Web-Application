@@ -103,14 +103,13 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                withCredentials([file(credentialsId: 'kubeconfig-credentials', variable: 'KUBECONFIG')]) {
                     script {
                         dir('Web-Application/k8s') { // Assuming Kubernetes manifests are in 'k8s' directory
                             echo "Applying Kubernetes manifests..."
                             bat 'kubectl apply -f deployment.yaml'
                             bat 'kubectl apply -f service.yaml'
                         }
-                    }
+                    
                 }
             }
         }
