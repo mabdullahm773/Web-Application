@@ -104,7 +104,7 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                     script {
-                        dir('Web-Application/kubernets') { // Assuming Kubernetes manifests are in 'k8s' directory
+                        dir('Web-Application/kubernets/') { // Assuming Kubernetes manifests are in 'k8s' directory
                             echo "Applying Kubernetes manifests..."
                             bat 'kubectl apply -f deployment.yaml'
                             bat 'kubectl apply -f service.yaml'
