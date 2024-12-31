@@ -106,7 +106,7 @@ pipeline {
 
                     script {
 
-                        bat 'xcopy "Web-Application\\kubernets\\*" "C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\Ecommerce-Website-Project\\Web-Application\\kubernets" /E /Y'
+                      //  bat 'xcopy "Web-Application\\kubernets\\*" "C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\Ecommerce-Website-Project\\Web-Application\\kubernets" /E /Y'
 
                         
                         dir('Web-Application/kubernets/') {
@@ -115,6 +115,7 @@ pipeline {
 
                             echo "Listing files in the current directory:"
                             bat 'dir' // List files in the current directory to verify the path
+                            bat 'Web-Application'
                             echo "Applying Kubernetes manifests..."
                             bat 'kubectl apply -f deployment.yaml'
                             bat 'kubectl apply -f service.yaml'
