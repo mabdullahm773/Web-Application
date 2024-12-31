@@ -3,6 +3,9 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'huzaifa305/web-application:latest'
         DOCKER_REGISTRY = 'docker.io'
+        KUBECONFIG = """C:\\Users\\Administrator\\.kube\\config"""
+
+
     }
     stages {
         stage('Clean Workspace') {
@@ -125,7 +128,7 @@ pipeline {
 
 
     }
-    
+
     post {
         always {
             echo 'Pipeline completed.'
