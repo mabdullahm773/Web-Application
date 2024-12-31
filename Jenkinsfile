@@ -3,7 +3,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'huzaifa305/web-application:latest'
         DOCKER_REGISTRY = 'docker.io'
-        KUBECONFIG = 'C:\Users\Administrator\.kube\config' // Path to your kubeconfig file
+        KUBECONFIG = """C:\\Users\\Administrator\\.kube\\config""" // Path to your kubeconfig file
     }
     stages {
         stage('Clean Workspace') {
