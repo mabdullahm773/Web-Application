@@ -28,6 +28,8 @@ pipeline {
                 bat 'dir'  // List the files in the workspace
             }
         }
+
+
         stage('Build Docker Image') {
             steps {
                 script {
@@ -53,11 +55,25 @@ pipeline {
                                                   passwordVariable: 'DOCKER_PASSWORD')]) {
                     script {
                         echo "Logging in to Docker registry: ${DOCKER_REGISTRY} with user: ${DOCKER_USERNAME}"
+<<<<<<< HEAD
                         bat """
                             echo %DOCKER_PASSWORD% | docker login %DOCKER_REGISTRY% -u %DOCKER_USERNAME% --password-stdin
                         """
                         echo "Pushing Docker image: ${DOCKER_IMAGE}"
                         bat 'docker push %DOCKER_IMAGE%'
+=======
+
+                        bat """
+                            docker login %DOCKER_REGISTRY% -u %DOCKER_USERNAME% -p %DOCKER_PASSWORD%
+                        """
+
+                        echo "Pushing Docker image: ${DOCKER_IMAGE}"
+
+                        bat """
+                            docker push %DOCKER_IMAGE%
+                        """
+
+>>>>>>> fabc8007331731bd7957a02d77c0ec2939da173f
                     }
                 }
             }
@@ -73,8 +89,22 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 script {
+<<<<<<< HEAD
                     echo "Running Docker container from image: ${DOCKER_IMAGE}"
                     bat 'docker run -d %DOCKER_IMAGE%'
+=======
+                    
+                    echo "Running Docker container from image: ${DOCKER_IMAGE}"
+                    bat 'docker run -d -p 5000:5000 %DOCKER_IMAGE%'
+                }
+            }
+        }
+        stage('Debug Docker Container') {
+            steps {
+                script {
+                    echo "Listing running Docker containers:"
+                    bat 'docker ps'
+>>>>>>> fabc8007331731bd7957a02d77c0ec2939da173f
                 }
             }
         }
@@ -118,9 +148,21 @@ pipeline {
         }
         success {
             echo 'Pipeline succeeded!'
+            script {
+                slackSend(
+                    channel: '#ecommerce-web-applicaiton',
+                    message: "Pipeline succeeded! The Docker image ${DOCKER_IMAGE} was built and pushed successfully."
+                )
+            }
         }
         failure {
             echo 'Pipeline failed.'
+             script {
+                slackSend(
+                    channel: '#ecommerce-web-applicaiton',
+                    message: "Pipeline failed! Please check the Jenkins logs for details."
+                )
+            }
         }
     }
 }
