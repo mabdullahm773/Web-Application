@@ -101,39 +101,6 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') {
-            steps {
-
-                    script {
-
-                        
-                        dir('Web-Application') {
-                            
-                             // Assuming Kubernetes manifests are in 'k8s' directory
-
-                            echo "Listing files in the current directory:"
-                            bat 'dir' // List files in the current directory to verify the path
-                            echo "Applying Kubernetes manifests..."
-                            bat 'kubectl apply -f deployment.yaml'
-                            bat 'kubectl apply -f service.yaml'
-                        }
-                    
-                }
-            }
-        }
-
-        stage('Debug Kubernetes Deployment') {
-            steps {
-                script {
-                    echo "Checking Kubernetes resources..."
-                    bat 'kubectl get pods'
-                    bat 'kubectl get services'
-                }
-            }
-        }
-
-
-
     }
 
     post {
