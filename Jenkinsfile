@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE = 'mabdullahm773/web-Application'
+        DOCKER_IMAGE = 'huzaifa305/web-Application'
         DOCKER_REGISTRY = 'docker.io'
     }
     stages {
