@@ -16,4 +16,8 @@
 - **Added Searchpage**
 - **Added ContactUS**
 - **Added Dockerfile**
-- **Added DcokerCompose**
+- **Added DockerCompose**
+- **Added Slack on Channel #ecommerce-web-applicaiton**
+- **Jenkins Hosted on Server**
+- **Using Tunneling instead of port forwarding For Webhook and Jenkins Server**
+- **Added Github Webhook**
