@@ -1,14 +1,17 @@
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE = 'mabdullahm773/web-Application'
+        DOCKER_IMAGE = 'huzaifa305/web-application:latest'
         DOCKER_REGISTRY = 'docker.io'
+        KUBECONFIG = """C:\\Users\\Administrator\\.kube\\config"""
+
+
     }
     stages {
         stage('Clean Workspace') {
             steps {
                 script {
-                    deleteDir() // Clean the previous workspace
+                    deleteDir() // Clean the workspace
                 }
             }
         }
@@ -49,9 +52,9 @@ pipeline {
         }
         stage('Push Docker Image') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'A-docker-credentials', 
-                                                  usernameVariable: 'A-DOCKER_USERNAME', 
-                                                  passwordVariable: 'A-DOCKER_PASSWORD')]) {
+                withCredentials([usernamePassword(credentialsId: 'docker-credentials', 
+                                                  usernameVariable: 'DOCKER_USERNAME', 
+                                                  passwordVariable: 'DOCKER_PASSWORD')]) {
                     script {
                         echo "Logging in to Docker registry: ${DOCKER_REGISTRY} with user: ${DOCKER_USERNAME}"
 
@@ -77,6 +80,8 @@ pipeline {
                 }
             }
         }
+
+
         stage('Run Docker Container') {
             steps {
                 script {
@@ -86,6 +91,7 @@ pipeline {
                 }
             }
         }
+
         stage('Debug Docker Container') {
             steps {
                 script {
@@ -94,48 +100,84 @@ pipeline {
                 }
             }
         }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+
+                    script {
+
+                        
+                        dir('Web-Application') {
+                            
+                             // Assuming Kubernetes manifests are in 'k8s' directory
+
+                            echo "Listing files in the current directory:"
+                            bat 'dir' // List files in the current directory to verify the path
+                            echo "Applying Kubernetes manifests..."
+                            bat 'kubectl apply -f deployment.yaml'
+                            bat 'kubectl apply -f service.yaml'
+                        }
+                    
+                }
+            }
+        }
+
+        stage('Debug Kubernetes Deployment') {
+            steps {
+                script {
+                    echo "Checking Kubernetes resources..."
+                    bat 'kubectl get pods'
+                    bat 'kubectl get services'
+                }
+            }
+        }
+
+
+
     }
+
     post {
-        always {
-            echo 'Pipeline completed.'
+    always {
+        echo 'Pipeline completed.'
+    }
+    success {
+        echo 'Pipeline succeeded!'
+        script {
+            slackSend(
+                channel: '#ecommerce-web-applicaiton',
+                message: "Pipeline succeeded! The Docker image ${DOCKER_IMAGE} was built and pushed successfully."
+            )
         }
-        success {
-            echo 'Pipeline succeeded!'
-            script {
-                slackSend(
-                    channel: '#ecommerce-web-applicaiton',
-                    message: "Pipeline succeeded! The Docker image ${DOCKER_IMAGE} was built and pushed successfully."
-                )
-                emailext(
-                    to: 'mabdullahm773@gmail.com',
-                    subject: "Jenkins Pipeline Success - ${JOB_NAME} #${BUILD_NUMBER}",
-                    body: """<p>Pipeline <b>${JOB_NAME}</b> build <b>${BUILD_NUMBER}</b> succeeded!</p>
-                             <p>Details:</p>
-                             <ul>
-                               <li>Docker Image: ${DOCKER_IMAGE}</li>
-                               <li>Job: <a href="${BUILD_URL}">${BUILD_URL}</a></li>
-                             </ul>"""
-                )
-            }
+        emailext(
+            subject: "Pipeline SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+            body: """<p>Pipeline succeeded!</p>
+                     <p>The Docker image <b>${DOCKER_IMAGE}</b> was built and pushed successfully.</p>
+                     <p>Job: <a href="${env.BUILD_URL}">${env.JOB_NAME}</a></p>""",
+            to: "ihuzaifa2010@gmail.com"
+        )
+    }
+    failure {
+        echo 'Pipeline failed.'
+        script {
+            slackSend(
+                channel: '#ecommerce-web-applicaiton',
+                message: "Pipeline failed! Please check the Jenkins logs for details."
+            )
         }
-        failure {
-            echo 'Pipeline failed.'
-             script {
-                slackSend(
-                    channel: '#ecommerce-web-applicaiton',
-                    message: "Pipeline failed! Please check the Jenkins logs for details."
-                )
-                emailext(
-                    to: 'mabdullahm773@gmail.com',
-                    subject: "Jenkins Pipeline Failure - ${JOB_NAME} #${BUILD_NUMBER}",
-                    body: """<p>Pipeline <b>${JOB_NAME}</b> build <b>${BUILD_NUMBER}</b> failed.</p>
-                             <p>Details:</p>
-                             <ul>
-                               <li>Job: <a href="${BUILD_URL}">${BUILD_URL}</a></li>
-                               <li>Please check the Jenkins logs for more details.</li>
-                             </ul>"""
-                )
-            }
-        }
+        emailext(
+            subject: "Pipeline FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+            body: """<p>Pipeline failed!</p>
+                     <p>Job: <a href="${env.BUILD_URL}">${env.JOB_NAME}</a></p>
+                     <p>Please check the Jenkins logs for details.</p>""",
+            to: "ihuzaifa2010@gmail.com"
+        )
     }
 }
+
+
+}
+
+         
+
+
+    
