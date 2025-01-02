@@ -84,7 +84,7 @@ pipeline {
 
         stage('Run Docker Container') {
 
-            step {
+            steps {
 
                         script {
                         echo "Stopping any container using port 5000"
