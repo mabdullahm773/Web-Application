@@ -108,6 +108,9 @@ pipeline {
 
                         
                         dir('Web-Application') {
+                            
+                             // Assuming Kubernetes manifests are in 'k8s' directory
+
                             echo "Listing files in the current directory:"
                             bat 'dir' // List files in the current directory to verify the path
                             echo "Applying Kubernetes manifests..."
@@ -150,8 +153,7 @@ pipeline {
             body: """<p>Pipeline succeeded!</p>
                      <p>The Docker image <b>${DOCKER_IMAGE}</b> was built and pushed successfully.</p>
                      <p>Job: <a href="${env.BUILD_URL}">${env.JOB_NAME}</a></p>""",
-
-            to: "syeddanyalraza@outlook.com"
+            to: "ihuzaifa2010@gmail.com"
         )
     }
     failure {
@@ -167,15 +169,15 @@ pipeline {
             body: """<p>Pipeline failed!</p>
                      <p>Job: <a href="${env.BUILD_URL}">${env.JOB_NAME}</a></p>
                      <p>Please check the Jenkins logs for details.</p>""",
-            to: "syeddanyalraza@outlook.com"
+            to: "ihuzaifa2010@gmail.com"
         )
     }
 }
 
 
-        )
-    }
 }
 
+         
 
-}
+
+    
