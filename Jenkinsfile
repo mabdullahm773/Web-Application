@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE = 'danyalraza237/web-application:latest'
+        DOCKER_IMAGE = 'huzaifa305/web-application:latest'
         DOCKER_REGISTRY = 'docker.io'
         KUBECONFIG = """C:\\Users\\Administrator\\.kube\\config"""
 
@@ -150,6 +150,7 @@ pipeline {
             body: """<p>Pipeline succeeded!</p>
                      <p>The Docker image <b>${DOCKER_IMAGE}</b> was built and pushed successfully.</p>
                      <p>Job: <a href="${env.BUILD_URL}">${env.JOB_NAME}</a></p>""",
+
             to: "syeddanyalraza@outlook.com"
         )
     }
@@ -167,6 +168,11 @@ pipeline {
                      <p>Job: <a href="${env.BUILD_URL}">${env.JOB_NAME}</a></p>
                      <p>Please check the Jenkins logs for details.</p>""",
             to: "syeddanyalraza@outlook.com"
+        )
+    }
+}
+
+
         )
     }
 }
