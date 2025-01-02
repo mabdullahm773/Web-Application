@@ -164,36 +164,6 @@ pipeline {
                 message: "Pipeline failed! Please check the Jenkins logs for details."
             )
         }
-    }
-
-    post {
-    always {
-        echo 'Pipeline completed.'
-    }
-    success {
-        echo 'Pipeline succeeded!'
-        script {
-            slackSend(
-                channel: '#ecommerce-web-applicaiton',
-                message: "Pipeline succeeded! The Docker image ${DOCKER_IMAGE} was built and pushed successfully."
-            )
-        }
-        emailext(
-            subject: "Pipeline SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-            body: """<p>Pipeline succeeded!</p>
-                     <p>The Docker image <b>${DOCKER_IMAGE}</b> was built and pushed successfully.</p>
-                     <p>Job: <a href="${env.BUILD_URL}">${env.JOB_NAME}</a></p>""",
-            to: "ihuzaifa2010@gmail.com"
-        )
-    }
-    failure {
-        echo 'Pipeline failed.'
-        script {
-            slackSend(
-                channel: '#ecommerce-web-applicaiton',
-                message: "Pipeline failed! Please check the Jenkins logs for details."
-            )
-        }
         emailext(
             subject: "Pipeline FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
             body: """<p>Pipeline failed!</p>
@@ -204,8 +174,6 @@ pipeline {
     }
 }
 
-
-}
 
 }
 
