@@ -101,7 +101,6 @@ pipeline {
             }
         }
 
- feature-A
         stage('Deploy to Kubernetes') {
             steps {
 
@@ -165,7 +164,6 @@ pipeline {
                 message: "Pipeline failed! Please check the Jenkins logs for details."
             )
         }
-=======
     }
 
     post {
@@ -196,7 +194,6 @@ pipeline {
                 message: "Pipeline failed! Please check the Jenkins logs for details."
             )
         }
- master
         emailext(
             subject: "Pipeline FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
             body: """<p>Pipeline failed!</p>
