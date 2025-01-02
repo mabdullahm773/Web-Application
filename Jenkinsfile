@@ -83,14 +83,26 @@ pipeline {
 
 
         stage('Run Docker Container') {
+
             steps {
-                script {
-                    
-                    echo "Running Docker container from image: ${DOCKER_IMAGE}"
-                    bat 'docker run -d -p 5000:5000 %DOCKER_IMAGE%'
-                }
+
+                        script {
+                        echo "Stopping any container using port 5000"
+                        bat '''
+                            for /f "tokens=*" %%i in ('docker ps -q --filter "publish=5000"') do (
+                                docker stop %%i
+                            )
+                        '''
+
+                        echo "Running Docker container from image: ${DOCKER_IMAGE}"
+                        bat 'docker run -d -p 5000:5000 --rm %DOCKER_IMAGE%'
             }
+
+            }
+            
         }
+
+        
 
         stage('Debug Docker Container') {
             steps {
