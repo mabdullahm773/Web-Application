@@ -3,6 +3,9 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'danyalraza237/web-application:latest'
         DOCKER_REGISTRY = 'docker.io'
+        KUBECONFIG = """C:\\Users\\Administrator\\.kube\\config"""
+
+
     }
     stages {
         stage('Clean Workspace') {
@@ -14,11 +17,11 @@ pipeline {
         }
         stage('Checkout') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'github-credentials', 
-                                                  usernameVariable: 'GITHUB_USERNAME', 
-                                                  passwordVariable: 'GITHUB_PASSWORD')]) {
+                withCredentials([usernamePassword(credentialsId: 'Web-Project-Git', 
+                                                  usernameVariable: 'username', 
+                                                  passwordVariable: 'password')]) {
                     // Clone the GitHub repository using credentials
-                    bat 'git clone https://%GITHUB_USERNAME%:%GITHUB_PASSWORD%@github.com/mabdullahm773/Web-Application'
+                    bat 'git clone https://%username%:%password%@github.com/mabdullahm773/Web-Application'
                 }
             }
         }
@@ -27,12 +30,23 @@ pipeline {
                 bat 'dir'  // List the files in the workspace
             }
         }
+
+
         stage('Build Docker Image') {
             steps {
                 script {
-                    dir('Ecommerce-Frontend') { // Navigate into the cloned repo directory
+                    dir('Web-Application') { // Navigate into the cloned repo directory
+                        echo "Building Docker image: ${DOCKER_IMAGE}"
                         bat 'docker build -t %DOCKER_IMAGE% .'
                     }
+                }
+            }
+        }
+        stage('Debug Docker Image Build') {
+            steps {
+                script {
+                    echo "Checking local Docker images after build:"
+                    bat 'docker images'
                 }
             }
         }
@@ -42,33 +56,120 @@ pipeline {
                                                   usernameVariable: 'DOCKER_USERNAME', 
                                                   passwordVariable: 'DOCKER_PASSWORD')]) {
                     script {
-                        // Login to Docker Hub and push the image
+                        echo "Logging in to Docker registry: ${DOCKER_REGISTRY} with user: ${DOCKER_USERNAME}"
+
                         bat """
-                            echo %DOCKER_PASSWORD% | docker login %DOCKER_REGISTRY% -u %DOCKER_USERNAME% --password-stdin
+                            docker login %DOCKER_REGISTRY% -u %DOCKER_USERNAME% -p %DOCKER_PASSWORD%
+                        """
+
+                        echo "Pushing Docker image: ${DOCKER_IMAGE}"
+
+                        bat """
                             docker push %DOCKER_IMAGE%
                         """
+
                     }
                 }
             }
         }
-        stage('Run Docker Container') {
+        stage('Debug Docker Image Push') {
             steps {
                 script {
-                    // Run the Docker container
-                    bat 'docker run -d %DOCKER_IMAGE%'
+                    echo "Checking Docker registry for the pushed image:"
+                    bat 'docker pull %DOCKER_IMAGE%'
                 }
             }
         }
+
+
+        stage('Run Docker Container') {
+            steps {
+                script {
+                    
+                    echo "Running Docker container from image: ${DOCKER_IMAGE}"
+                    bat 'docker run -d -p 5000:5000 %DOCKER_IMAGE%'
+                }
+            }
+        }
+
+        stage('Debug Docker Container') {
+            steps {
+                script {
+                    echo "Listing running Docker containers:"
+                    bat 'docker ps'
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+
+                    script {
+
+                        
+                        dir('Web-Application') {
+                            echo "Listing files in the current directory:"
+                            bat 'dir' // List files in the current directory to verify the path
+                            echo "Applying Kubernetes manifests..."
+                            bat 'kubectl apply -f deployment.yaml'
+                            bat 'kubectl apply -f service.yaml'
+                        }
+                    
+                }
+            }
+        }
+
+        stage('Debug Kubernetes Deployment') {
+            steps {
+                script {
+                    echo "Checking Kubernetes resources..."
+                    bat 'kubectl get pods'
+                    bat 'kubectl get services'
+                }
+            }
+        }
+
+
+
     }
+
     post {
-        always {
-            echo 'Pipeline completed.'
-        }
-        success {
-            echo 'Pipeline succeeded!'
-        }
-        failure {
-            echo 'Pipeline failed.'
-        }
+    always {
+        echo 'Pipeline completed.'
     }
+    success {
+        echo 'Pipeline succeeded!'
+        script {
+            slackSend(
+                channel: '#ecommerce-web-applicaiton',
+                message: "Pipeline succeeded! The Docker image ${DOCKER_IMAGE} was built and pushed successfully."
+            )
+        }
+        emailext(
+            subject: "Pipeline SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+            body: """<p>Pipeline succeeded!</p>
+                     <p>The Docker image <b>${DOCKER_IMAGE}</b> was built and pushed successfully.</p>
+                     <p>Job: <a href="${env.BUILD_URL}">${env.JOB_NAME}</a></p>""",
+            to: "syeddanyalraza@outlook.com"
+        )
+    }
+    failure {
+        echo 'Pipeline failed.'
+        script {
+            slackSend(
+                channel: '#ecommerce-web-applicaiton',
+                message: "Pipeline failed! Please check the Jenkins logs for details."
+            )
+        }
+        emailext(
+            subject: "Pipeline FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+            body: """<p>Pipeline failed!</p>
+                     <p>Job: <a href="${env.BUILD_URL}">${env.JOB_NAME}</a></p>
+                     <p>Please check the Jenkins logs for details.</p>""",
+            to: "syeddanyalraza@outlook.com"
+        )
+    }
+}
+
+
 }
