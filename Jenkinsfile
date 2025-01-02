@@ -3,6 +3,9 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'huzaifa305/web-application:latest'
         DOCKER_REGISTRY = 'docker.io'
+        KUBECONFIG = """C:\\Users\\Administrator\\.kube\\config"""
+
+
     }
     stages {
         stage('Clean Workspace') {
@@ -77,6 +80,8 @@ pipeline {
                 }
             }
         }
+
+
         stage('Run Docker Container') {
             steps {
                 script {
@@ -86,6 +91,7 @@ pipeline {
                 }
             }
         }
+
         stage('Debug Docker Container') {
             steps {
                 script {
@@ -94,28 +100,51 @@ pipeline {
                 }
             }
         }
+
     }
+
     post {
-        always {
-            echo 'Pipeline completed.'
+    always {
+        echo 'Pipeline completed.'
+    }
+    success {
+        echo 'Pipeline succeeded!'
+        script {
+            slackSend(
+                channel: '#ecommerce-web-applicaiton',
+                message: "Pipeline succeeded! The Docker image ${DOCKER_IMAGE} was built and pushed successfully."
+            )
         }
-        success {
-            echo 'Pipeline succeeded!'
-            script {
-                slackSend(
-                    channel: '#ecommerce-web-applicaiton',
-                    message: "Pipeline succeeded! The Docker image ${DOCKER_IMAGE} was built and pushed successfully."
-                )
-            }
+        emailext(
+            subject: "Pipeline SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+            body: """<p>Pipeline succeeded!</p>
+                     <p>The Docker image <b>${DOCKER_IMAGE}</b> was built and pushed successfully.</p>
+                     <p>Job: <a href="${env.BUILD_URL}">${env.JOB_NAME}</a></p>""",
+            to: "ihuzaifa2010@gmail.com"
+        )
+    }
+    failure {
+        echo 'Pipeline failed.'
+        script {
+            slackSend(
+                channel: '#ecommerce-web-applicaiton',
+                message: "Pipeline failed! Please check the Jenkins logs for details."
+            )
         }
-        failure {
-            echo 'Pipeline failed.'
-             script {
-                slackSend(
-                    channel: '#ecommerce-web-applicaiton',
-                    message: "Pipeline failed! Please check the Jenkins logs for details."
-                )
-            }
-        }
+        emailext(
+            subject: "Pipeline FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+            body: """<p>Pipeline failed!</p>
+                     <p>Job: <a href="${env.BUILD_URL}">${env.JOB_NAME}</a></p>
+                     <p>Please check the Jenkins logs for details.</p>""",
+            to: "ihuzaifa2010@gmail.com"
+        )
     }
 }
+
+
+}
+
+         
+
+
+    
