@@ -103,7 +103,6 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-
                     script {
 
                         
@@ -153,7 +152,7 @@ pipeline {
             body: """<p>Pipeline succeeded!</p>
                      <p>The Docker image <b>${DOCKER_IMAGE}</b> was built and pushed successfully.</p>
                      <p>Job: <a href="${env.BUILD_URL}">${env.JOB_NAME}</a></p>""",
-            to: "ihuzaifa2010@gmail.com"
+            to: "mabdullahm773@gmail.com"
         )
     }
     failure {
@@ -183,7 +182,7 @@ pipeline {
             body: """<p>Pipeline succeeded!</p>
                      <p>The Docker image <b>${DOCKER_IMAGE}</b> was built and pushed successfully.</p>
                      <p>Job: <a href="${env.BUILD_URL}">${env.JOB_NAME}</a></p>""",
-            to: "ihuzaifa2010@gmail.com"
+            to: "mabdullahm773@gmail.com"
         )
     }
     failure {
