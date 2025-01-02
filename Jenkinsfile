@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE = 'huzaifa305/web-application:latest'
+        DOCKER_IMAGE = 'mabdullah773/web-application:latest'
         DOCKER_REGISTRY = 'docker.io'
         KUBECONFIG = """C:\\Users\\Administrator\\.kube\\config"""
 
@@ -101,7 +101,6 @@ pipeline {
             }
         }
 
- feature-A
         stage('Deploy to Kubernetes') {
             steps {
 
@@ -165,7 +164,6 @@ pipeline {
                 message: "Pipeline failed! Please check the Jenkins logs for details."
             )
         }
-=======
     }
 
     post {
@@ -202,12 +200,10 @@ pipeline {
             body: """<p>Pipeline failed!</p>
                      <p>Job: <a href="${env.BUILD_URL}">${env.JOB_NAME}</a></p>
                      <p>Please check the Jenkins logs for details.</p>""",
-            to: "ihuzaifa2010@gmail.com"
+            to: "mabdullahm773@gmail.com"
         )
     }
 }
-
-
 }
 
          
